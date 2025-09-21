@@ -9,10 +9,10 @@
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-#define GRID_SIZE 2                 // Very small blocks (2x2 pixels)
+#define GRID_SIZE 4                 // Moderate size blocks (4x4 pixels)
 #define GRID_WIDTH (SCREEN_WIDTH / GRID_SIZE)
 #define GRID_HEIGHT (SCREEN_HEIGHT / GRID_SIZE)
-#define MAX_SNAKE_LENGTH 300        // Increased max length due to smaller blocks
+#define MAX_SNAKE_LENGTH 150        // Max length for snake segments
 
 struct Point {
   int x;
@@ -26,7 +26,8 @@ int directionY = 0;
 Point food;
 
 unsigned long lastUpdateTime = 0;
-const unsigned long updateInterval = 100;  // Speed can be increased
+const unsigned long updateInterval = 150;  // Control snake speed
+
 bool gameOver = false;
 
 void setup() {
@@ -35,6 +36,7 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
+
   randomSeed(analogRead(0));
 
   int startX = GRID_WIDTH / 2;
@@ -47,12 +49,8 @@ void setup() {
   placeFood();
 
   display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(20, SCREEN_HEIGHT / 2 - 10);
-  display.print("Snake Game");
   display.display();
-  delay(1500);
+  // No startup text displayed
 }
 
 void loop() {
@@ -72,23 +70,19 @@ void loop() {
 }
 
 void moveSnake() {
-  // Move body
   for(int i = snakeLength - 1; i > 0; i--) {
     snake[i] = snake[i-1];
   }
 
-  // Move head
   snake[0].x += directionX;
   snake[0].y += directionY;
 
-  // Wrap around edges
   if (snake[0].x < 0) snake[0].x = GRID_WIDTH - 1;
   else if (snake[0].x >= GRID_WIDTH) snake[0].x = 0;
 
   if (snake[0].y < 0) snake[0].y = GRID_HEIGHT - 1;
   else if (snake[0].y >= GRID_HEIGHT) snake[0].y = 0;
 
-  // Food eaten?
   if (snake[0].x == food.x && snake[0].y == food.y) {
     if (snakeLength < MAX_SNAKE_LENGTH) {
       snakeLength++;
@@ -97,12 +91,10 @@ void moveSnake() {
     placeFood();
   }
 
-  // Automatically move toward food
   autoAdjustDirectionToFood();
 }
 
 void autoAdjustDirectionToFood() {
-  // Move closer to food on x or y axis (greedy)
   if (snake[0].x != food.x) {
     if ((food.x > snake[0].x && directionX != -1) || (snake[0].x == GRID_WIDTH-1 && food.x == 0)) {
       directionX = 1; directionY = 0;
@@ -145,20 +137,13 @@ void placeFood() {
 void drawGame() {
   display.clearDisplay();
 
-  // Draw food
+  // Draw food block
   display.fillRect(food.x * GRID_SIZE, food.y * GRID_SIZE, GRID_SIZE, GRID_SIZE, SSD1306_WHITE);
 
-  // Draw snake
+  // Draw snake blocks
   for(int i = 0; i < snakeLength; i++) {
     display.fillRect(snake[i].x * GRID_SIZE, snake[i].y * GRID_SIZE, GRID_SIZE, GRID_SIZE, SSD1306_WHITE);
   }
-
-  // Score
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-  display.print("Len:");
-  display.print(snakeLength);
 
   display.display();
 }
