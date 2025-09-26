@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMO Robot Controller</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;700&display=swap');
+        
+        :root {
+            --primary: #6d28d9;
+            --primary-dark: #5b21b6;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --dark: #1e1b4b;
+            --light: #f0f9ff;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        
+        .emo-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .panel {
+            background: rgba(30, 27, 75, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(109, 40, 217, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            height: fit-content;
+        }
+        
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        .panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(109, 40, 217, 0.4);
+        }
+        
+        .glow-button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-size: 14px;
+        }
+        
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .glow-button:hover::before {
+            left: 100%;
+        }
+        
+        .glow-button:hover {
+            box-shadow: 0 0 15px rgba(109, 40, 217, 0.7);
+            transform: scale(1.03);
+        }
+        
+        .input-field {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(109, 40, 217, 0.5);
+            border-radius: 8px;
+            color: white;
+            padding: 10px 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+        }
+        
+        .canvas-container {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            height: 180px;
+        }
+        
+        canvas {
+            touch-action: none;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        
+        .online {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+        
+        .offline {
+            background: #ef4444;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .floating-emoji {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.7;
+            z-index: -1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        .robot-face {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4c1d95, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.5);
+        }
+        
+        .eyes {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+        
+        .eye {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pupil {
+            width: 9px;
+            height: 9px;
+            background: #1e1b4b;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .mouth {
+            width: 30px;
+            height: 8px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .tab-button {
+            background: rgba(30, 27, 75, 0.7);
+            border: 1px solid rgba(109, 40, 217, 0.3);
+            border-radius: 8px 8px 0 0;
+            padding: 8px 16px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .tab-button.active {
+            background: rgba(109, 40, 217, 0.3);
+            color: white;
+            border-bottom: 3px solid var(--secondary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .compact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .compact-panel {
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mode-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .mode-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .mode-info {
+            flex: 1;
+        }
+        
+        .mode-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .mode-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .timer-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .timer-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .timer-separator {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            align-self: center;
+            margin-top: 10px;
+        }
+        
+        .expression-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .expression-btn {
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .expression-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .expression-emoji {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .expression-label {
+            font-size: 12px;
+        }
+        
+        .settings-item {
+            margin-bottom: 15px;
+        }
+        
+        .settings-label {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .settings-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .stopwatch-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            text-align: center;
+            color: var(--secondary);
+            margin: 10px 0;
+        }
+        
+        .stopwatch-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .drawing-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .tabs-section {
+            margin-bottom: 20px;
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Emojis -->
+    <div class="floating-emoji" style="top: 5%; left: 5%;">🤖</div>
+    <div class="floating-emoji" style="top: 15%; right: 8%;">😊</div>
+    <div class="floating-emoji" style="bottom: 10%; left: 6%;">⚡</div>
+    <div class="floating-emoji" style="bottom: 20%; right: 4%;">💡</div>
+
+    <div class="main-container">
+        <!-- Header with Robot Status -->
+        <div class="header-section">
+            <div class="robot-face">
+                <div class="eyes">
+                    <div class="eye"><div class="pupil"></div></div>
+                    <div class="eye"><div class="pupil"></div></div>
+                </div>
+                <div class="mouth"></div>
+            </div>
+            <h1 class="emo-font text-3xl font-bold mb-2 gradient-text">EMO ROBOT CONTROLLER</h1>
+            <p class="text-md text-cyan-200">Your personal companion, now at your fingertips</p>
+            <div class="flex items-center justify-center mt-3">
+                <span class="status-indicator online pulse"></span>
+                <span class="text-green-400 font-semibold text-sm">Connected to EMO</span>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-section">
+            <div class="tabs-container">
+                <button class="tab-button active" data-tab="control">Control Panel</button>
+                <button class="tab-button" data-tab="expressions">Expressions</button>
+                <button class="tab-button" data-tab="settings">Settings</button>
+            </div>
+        </div>
+
+        <!-- Control Panel Tab -->
+        <div id="control" class="tab-content active">
+            <div class="compact-grid">
+                <!-- Timer Panel -->
+                <div class="panel compact-panel">
+                    <h2 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-clock mr-2 text-purple-400"></i> Custom Timer
+                    </h2>
+                    <div class="timer-inputs">
+                        <div class="timer-input-group">
+                            <input type="number" id="timerHours" min="0" max="23" value="0" class="input-field text-center">
+                            <span class="text-gray-400 text-xs mt-1">Hours</span>
+                        </div>
+                        <span class="timer-separator">:</span>
+                        <div class="timer-input-group">
+                            <input type="number" id="timerMinutes" min="0" max="59" value="5" class="input-field text-center">
+                            <span class="text-gray-400 text-xs mt-1">Minutes</span>
+                        </div>
+                        <span class="timer-separator">:</span>
+                        <div class="timer-input-group">
+                            <input type="number" id="timerSeconds" min="0" max="59" value="0" class="input-field text-center">
+                            <span class="text-gray-400 text-xs mt-1">Seconds</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="timerMessage" class="block text-sm font-medium text-gray-300 mb-1">Message for EMO</label>
+                        <textarea id="timerMessage" rows="2" class="input-field resize-none" placeholder="e.g., 'Time to charge up!'">Time for a break!</textarea>
+                    </div>
+                    <button id="startTimerBtn" class="glow-button w-full py-2">
+                        <i class="fas fa-play mr-2"></i> Start Timer
+                    </button>
+                </div>
+
+                <!-- Drawing Panel -->
+                <div class="panel compact-panel">
+                    <h2 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-paint-brush mr-2 text-cyan-400"></i> OLED Drawing
+                    </h2>
+                    <div class="canvas-container">
+                        <canvas id="oledCanvas"></canvas>
+                    </div>
+                    <div class="drawing-controls">
+                        <button id="clearCanvasBtn" class="glow-button flex-1" style="background: linear-gradient(135deg, #64748b, #475569);">
+                            <i class="fas fa-eraser mr-2"></i> Clear
+                        </button>
+                        <button id="sendDrawingBtn" class="glow-button flex-1">
+                            <i class="fas fa-paper-plane mr-2"></i> Send to EMO
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stopwatch Panel -->
+                <div class="panel compact-panel">
+                    <h2 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-stopwatch mr-2 text-yellow-400"></i> Stopwatch
+                    </h2>
+                    <div class="stopwatch-display">00:00:00</div>
+                    <div class="stopwatch-controls">
+                        <button id="startStopwatchBtn" class="glow-button flex-1">
+                            <i class="fas fa-play mr-2"></i> Start
+                        </button>
+                        <button id="resetStopwatchBtn" class="glow-button flex-1" style="background: linear-gradient(135deg, #64748b, #475569);">
+                            <i class="fas fa-redo mr-2"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modes Panel -->
+                <div class="panel compact-panel">
+                    <h2 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-cog mr-2 text-green-400"></i> Robot Modes
+                    </h2>
+                    <div class="space-y-2">
+                        <div class="mode-item">
+                            <div class="mode-info">
+                                <div class="mode-title">Do Not Disturb</div>
+                                <div class="mode-desc">Silence all sounds and motions</div>
+                            </div>
+                            <button id="dndBtn" class="glow-button py-2 px-3 text-xs">
+                                <i class="fas fa-bell-slash mr-1"></i> Activate
+                            </button>
+                        </div>
+                        
+                        <div class="mode-item">
+                            <div class="mode-info">
+                                <div class="mode-title">In Meeting Mode</div>
+                                <div class="mode-desc">Minimal interaction mode</div>
+                            </div>
+                            <button id="meetingBtn" class="glow-button py-2 px-3 text-xs" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                                <i class="fas fa-video mr-1"></i> Activate
+                            </button>
+                        </div>
+                        
+                        <div class="mode-item">
+                            <div class="mode-info">
+                                <div class="mode-title">Playful Mode</div>
+                                <div class="mode-desc">Increased interactions</div>
+                            </div>
+                            <button id="playfulBtn" class="glow-button py-2 px-3 text-xs" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                                <i class="fas fa-gamepad mr-1"></i> Activate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expressions Tab -->
+        <div id="expressions" class="tab-content">
+            <div class="panel">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-smile-beam mr-2 text-yellow-400"></i> EMO Expressions
+                </h2>
+                <div class="expression-grid">
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😊</div>
+                        <div class="expression-label">Happy</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😢</div>
+                        <div class="expression-label">Sad</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😠</div>
+                        <div class="expression-label">Angry</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😲</div>
+                        <div class="expression-label">Surprised</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😴</div>
+                        <div class="expression-label">Sleepy</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😍</div>
+                        <div class="expression-label">Loving</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">🤔</div>
+                        <div class="expression-label">Thinking</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">🎉</div>
+                        <div class="expression-label">Celebrate</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😎</div>
+                        <div class="expression-label">Cool</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">🤩</div>
+                        <div class="expression-label">Excited</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😇</div>
+                        <div class="expression-label">Innocent</div>
+                    </div>
+                    <div class="expression-btn">
+                        <div class="expression-emoji">😜</div>
+                        <div class="expression-label">Playful</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="panel">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-sliders-h mr-2 text-green-400"></i> EMO Settings
+                </h2>
+                <div class="space-y-4">
+                    <div class="settings-item">
+                        <div class="settings-label">Robot Name</div>
+                        <input type="text" class="input-field" value="EMO-001">
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-label">Volume <span id="volumeValue">70%</span></div>
+                        <input type="range" min="0" max="100" value="70" class="w-full" id="volumeSlider">
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-label">Brightness <span id="brightnessValue">80%</span></div>
+                        <input type="range" min="0" max="100" value="80" class="w-full" id="brightnessSlider">
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-label">Sensitivity <span id="sensitivityValue">60%</span></div>
+                        <input type="range" min="0" max="100" value="60" class="w-full" id="sensitivitySlider">
+                    </div>
+                    
+                    <div class="settings-controls">
+                        <button class="glow-button flex-1">
+                            <i class="fas fa-save mr-2"></i> Save Settings
+                        </button>
+                        <button class="glow-button flex-1" style="background: linear-gradient(135deg, #64748b, #475569);">
+                            <i class="fas fa-undo mr-2"></i> Reset Defaults
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status & Message Box -->
+    <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center p-4 z-50">
+        <div class="panel p-6 max-w-sm w-full text-center">
+            <div class="text-5xl mb-4">🤖</div>
+            <h3 id="messageTitle" class="text-xl font-bold mb-2"></h3>
+            <p id="messageText" class="text-gray-300 mb-4"></p>
+            <button id="closeMessageBtn" class="glow-button py-2 px-6">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Utility for displaying messages to the user
+        function showMessage(title, text) {
+            const messageBox = document.getElementById('messageBox');
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageText').textContent = text;
+            messageBox.classList.remove('hidden');
+        }
+
+        document.getElementById('closeMessageBtn').addEventListener('click', () => {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.classList.add('hidden');
+        });
+
+        // Tab functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs and buttons
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Expression buttons
+        document.querySelectorAll('.expression-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const expression = btn.querySelector('.expression-label').textContent;
+                showMessage('Expression Sent', `EMO is now showing a ${expression} expression!`);
+            });
+        });
+
+        // Playful mode button
+        document.getElementById('playfulBtn').addEventListener('click', function() {
+            const isActive = this.innerHTML.includes('Deactivate');
+            if (isActive) {
+                this.innerHTML = '<i class="fas fa-gamepad mr-1"></i> Activate';
+                this.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+                showMessage('Playful Mode', 'Playful mode has been deactivated.');
+            } else {
+                this.innerHTML = '<i class="fas fa-gamepad mr-1"></i> Deactivate';
+                this.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                showMessage('Playful Mode', 'Playful mode activated! EMO is ready to play.');
+            }
+        });
+
+        // Settings sliders
+        document.getElementById('volumeSlider').addEventListener('input', function() {
+            document.getElementById('volumeValue').textContent = this.value + '%';
+        });
+        
+        document.getElementById('brightnessSlider').addEventListener('input', function() {
+            document.getElementById('brightnessValue').textContent = this.value + '%';
+        });
+        
+        document.getElementById('sensitivitySlider').addEventListener('input', function() {
+            document.getElementById('sensitivityValue').textContent = this.value + '%';
+        });
+
+        // ===================================
+        // Drawing Pad Functionality
+        // ===================================
+        const canvas = document.getElementById('oledCanvas');
+        const ctx = canvas.getContext('2d');
+        const clearBtn = document.getElementById('clearCanvasBtn');
+        const sendBtn = document.getElementById('sendDrawingBtn');
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+            if (!clientX || !clientY) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            [lastX, lastY] = [x, y];
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        });
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+        canvas.addEventListener('touchstart', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.touches[0].clientX - rect.left;
+            const y = e.touches[0].clientY - rect.top;
+            [lastX, lastY] = [x, y];
+            e.preventDefault();
+        });
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', () => isDrawing = false);
+
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            showMessage("Canvas Cleared", "The drawing has been cleared and is ready for a new sketch.");
+        });
+
+        sendBtn.addEventListener('click', async () => {
+            showMessage("Sending Drawing...", "Please wait while the drawing is being sent to EMO.");
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                showMessage("Success!", "Drawing sent to EMO's display!");
+            } catch (error) {
+                console.error('Error sending drawing:', error);
+                showMessage("Error", "Failed to send drawing. Check your connection to EMO.");
+            }
+        });
+
+        // ===================================
+        // Timer Functionality
+        // ===================================
+        const timerHours = document.getElementById('timerHours');
+        const timerMinutes = document.getElementById('timerMinutes');
+        const timerSeconds = document.getElementById('timerSeconds');
+        const timerMessage = document.getElementById('timerMessage');
+        const startTimerBtn = document.getElementById('startTimerBtn');
+
+        startTimerBtn.addEventListener('click', async () => {
+            const hours = parseInt(timerHours.value) || 0;
+            const minutes = parseInt(timerMinutes.value) || 0;
+            const seconds = parseInt(timerSeconds.value) || 0;
+            const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+            const message = timerMessage.value.trim();
+
+            if (totalSeconds <= 0) {
+                showMessage("Invalid Timer", "Please set a timer duration greater than zero.");
+                return;
+            }
+
+            showMessage("Starting Timer...", `Timer set for ${totalSeconds} seconds with message: "${message}"`);
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                showMessage("Timer Started!", `EMO will alert you when the timer ends!`);
+            } catch (error) {
+                console.error('Error starting timer:', error);
+                showMessage("Error", "Failed to start timer. Check your connection to EMO.");
+            }
+        });
+
+        // ===================================
+        // Stopwatch Functionality
+        // ===================================
+        const stopwatchDisplay = document.querySelector('.stopwatch-display');
+        const startStopwatchBtn = document.getElementById('startStopwatchBtn');
+        const resetStopwatchBtn = document.getElementById('resetStopwatchBtn');
+
+        let stopwatchInterval;
+        let stopwatchTime = 0;
+        let isStopwatchRunning = false;
+
+        function formatStopwatchTime(seconds) {
+            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function toggleStopwatch() {
+            if (isStopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                startStopwatchBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Start';
+                isStopwatchRunning = false;
+            } else {
+                stopwatchInterval = setInterval(() => {
+                    stopwatchTime++;
+                    stopwatchDisplay.textContent = formatStopwatchTime(stopwatchTime);
+                }, 1000);
+                startStopwatchBtn.innerHTML = '<i class="fas fa-pause mr-2"></i> Stop';
+                isStopwatchRunning = true;
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchTime = 0;
+            isStopwatchRunning = false;
+            stopwatchDisplay.textContent = '00:00:00';
+            startStopwatchBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Start';
+            showMessage("Stopwatch Reset", "The stopwatch has been reset.");
+        }
+
+        startStopwatchBtn.addEventListener('click', toggleStopwatch);
+        resetStopwatchBtn.addEventListener('click', resetStopwatch);
+
+        // ===================================
+        // Do Not Disturb & In Meeting Functionality
+        // ===================================
+        const dndBtn = document.getElementById('dndBtn');
+        const meetingBtn = document.getElementById('meetingBtn');
+        let isDndActive = false;
+        let isMeetingActive = false;
+
+        dndBtn.addEventListener('click', () => {
+            isDndActive = !isDndActive;
+            if (isDndActive) {
+                dndBtn.innerHTML = '<i class="fas fa-bell mr-1"></i> Deactivate';
+                showMessage("Do Not Disturb", "DND mode activated. EMO will stay quiet.");
+            } else {
+                dndBtn.innerHTML = '<i class="fas fa-bell-slash mr-1"></i> Activate';
+                showMessage("Do Not Disturb", "DND mode deactivated. EMO can interact normally.");
+            }
+        });
+
+        meetingBtn.addEventListener('click', () => {
+            isMeetingActive = !isMeetingActive;
+            if (isMeetingActive) {
+                meetingBtn.innerHTML = '<i class="fas fa-video-slash mr-1"></i> Deactivate';
+                showMessage("In Meeting Mode", "Meeting mode activated. EMO will be discreet.");
+            } else {
+                meetingBtn.innerHTML = '<i class="fas fa-video mr-1"></i> Activate';
+                showMessage("In Meeting Mode", "Meeting mode deactivated. EMO can interact normally.");
+            }
+        });
+
+        // Animate robot face occasionally
+        setInterval(() => {
+            const pupils = document.querySelectorAll('.pupil');
+            pupils.forEach(pupil => {
+                const randomX = Math.random() * 6 - 3;
+                const randomY = Math.random() * 6 - 3;
+                pupil.style.transform = `translate(calc(-50% + ${randomX}px), calc(-50% + ${randomY}px))`;
+            });
+            
+            const mouth = document.querySelector('.mouth');
+            const randomHeight = Math.random() * 4 + 4;
+            mouth.style.height = `${randomHeight}px`;
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -1,4 +1,31 @@
-// 'nqe1 (1)', 128x64px
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// OLED Configuration
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET    -1
+#define OLED_ADDRESS  0x3C
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// Forward declarations for bitmaps used in frames[]
+extern const unsigned char epd_bitmap_nqe1__1_[] PROGMEM;
+
+
+
+// Animation frames array
+const unsigned char* frames[] = {
+   epd_bitmap_nqe1__1_
+};
+
+const int frameCount = sizeof(frames) / sizeof(frames[0]);
+int currentFrame = 0;
+unsigned long previousMillis = 0;
+const long interval = 100; // Time between frames in milliseconds
+
+// --- Your bitmap data goes here (keep all your existing bitmap arrays) ---
 const unsigned char epd_bitmap_nqe1__1_ [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -66,8 +93,42 @@ const unsigned char epd_bitmap_nqe1__1_ [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-// Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 1040)
-const int epd_bitmap_allArray_LEN = 1;
-const unsigned char* epd_bitmap_allArray[1] = {
-	epd_bitmap_nqe1__1_
-};
+// ... keep all your other frame definitions ...
+
+void setup() {
+  Serial.begin(115200);
+  if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;); // loop forever if OLED not found
+  }
+
+  display.clearDisplay();
+  Serial.println(F("OLED initialized. Starting animation..."));
+  Serial.print(F("Total frames: "));
+  Serial.println(frameCount);
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+  
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    
+    // Clear display
+    display.clearDisplay();
+    
+    // Draw current frame
+    display.drawBitmap(0, 0, frames[currentFrame], 128, 64, SSD1306_WHITE);
+    display.display();
+    
+    // Debug output
+    Serial.print(F("Frame: "));
+    Serial.println(currentFrame);
+    
+    // Move to next frame
+    currentFrame++;
+    if (currentFrame >= frameCount) {
+      currentFrame = 0; // Loop back to beginning
+    }
+  }
+}
