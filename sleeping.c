@@ -1,4 +1,162 @@
-// 'frame_065_delay-0', 128x64px
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// OLED Configuration
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET    -1
+#define OLED_ADDRESS  0x3C
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// Forward declarations for bitmaps used in frames[]
+extern const unsigned char epd_bitmap_frame_000_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_001_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_002_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_003_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_004_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_005_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_006_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_007_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_008_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_009_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_010_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_011_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_012_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_013_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_014_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_015_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_016_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_017_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_018_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_019_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_020_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_021_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_022_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_023_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_024_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_025_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_026_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_027_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_028_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_029_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_030_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_031_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_032_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_033_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_034_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_035_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_036_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_037_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_038_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_039_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_040_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_041_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_042_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_043_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_044_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_045_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_046_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_047_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_048_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_049_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_050_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_051_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_052_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_053_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_054_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_055_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_056_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_057_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_058_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_059_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_060_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_061_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_062_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_063_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_064_delay_0[] PROGMEM;
+extern const unsigned char epd_bitmap_frame_065_delay_0[] PROGMEM;
+
+
+// Animation frames array
+const unsigned char* frames[] = {
+	epd_bitmap_frame_000_delay_0,
+	epd_bitmap_frame_001_delay_0,
+	epd_bitmap_frame_002_delay_0,
+	epd_bitmap_frame_003_delay_0,
+	epd_bitmap_frame_004_delay_0,
+	epd_bitmap_frame_005_delay_0,
+	epd_bitmap_frame_006_delay_0,
+	epd_bitmap_frame_007_delay_0,
+	epd_bitmap_frame_008_delay_0,
+	epd_bitmap_frame_009_delay_0,
+	epd_bitmap_frame_010_delay_0,
+	epd_bitmap_frame_011_delay_0,
+	epd_bitmap_frame_012_delay_0,
+	epd_bitmap_frame_013_delay_0,
+	epd_bitmap_frame_014_delay_0,
+	epd_bitmap_frame_015_delay_0,
+	epd_bitmap_frame_016_delay_0,
+	epd_bitmap_frame_017_delay_0,
+	epd_bitmap_frame_018_delay_0,
+	epd_bitmap_frame_019_delay_0,
+	epd_bitmap_frame_020_delay_0,
+	epd_bitmap_frame_021_delay_0,
+	epd_bitmap_frame_022_delay_0,
+	epd_bitmap_frame_023_delay_0,
+	epd_bitmap_frame_024_delay_0,
+	epd_bitmap_frame_025_delay_0,
+	epd_bitmap_frame_026_delay_0,
+	epd_bitmap_frame_027_delay_0,
+	epd_bitmap_frame_028_delay_0,
+	epd_bitmap_frame_029_delay_0,
+	epd_bitmap_frame_030_delay_0,
+	epd_bitmap_frame_031_delay_0,
+	epd_bitmap_frame_032_delay_0,
+	epd_bitmap_frame_033_delay_0,
+	epd_bitmap_frame_034_delay_0,
+	epd_bitmap_frame_035_delay_0,
+	epd_bitmap_frame_036_delay_0,
+	epd_bitmap_frame_037_delay_0,
+	epd_bitmap_frame_038_delay_0,
+	epd_bitmap_frame_039_delay_0,
+	epd_bitmap_frame_040_delay_0,
+	epd_bitmap_frame_041_delay_0,
+	epd_bitmap_frame_042_delay_0,
+	epd_bitmap_frame_043_delay_0,
+	epd_bitmap_frame_044_delay_0,
+	epd_bitmap_frame_045_delay_0,
+	epd_bitmap_frame_046_delay_0,
+	epd_bitmap_frame_047_delay_0,
+	epd_bitmap_frame_048_delay_0,
+	epd_bitmap_frame_049_delay_0,
+	epd_bitmap_frame_050_delay_0,
+	epd_bitmap_frame_051_delay_0,
+	epd_bitmap_frame_052_delay_0,
+	epd_bitmap_frame_053_delay_0,
+	epd_bitmap_frame_054_delay_0,
+	epd_bitmap_frame_055_delay_0,
+	epd_bitmap_frame_056_delay_0,
+	epd_bitmap_frame_057_delay_0,
+	epd_bitmap_frame_058_delay_0,
+	epd_bitmap_frame_059_delay_0,
+	epd_bitmap_frame_060_delay_0,
+	epd_bitmap_frame_061_delay_0,
+	epd_bitmap_frame_062_delay_0,
+	epd_bitmap_frame_063_delay_0,
+	epd_bitmap_frame_064_delay_0,
+	epd_bitmap_frame_065_delay_0,
+
+};
+
+const int frameCount = sizeof(frames) / sizeof(frames[0]);
+int currentFrame = 0;
+unsigned long previousMillis = 0;
+const long interval = 100; // Time between frames in milliseconds
+
+// --- Your bitmap data goes here (keep all your existing bitmap arrays) ---
+
 const unsigned char epd_bitmap_frame_065_delay_0 [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -4420,74 +4578,42 @@ const unsigned char epd_bitmap_frame_000_delay_0 [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
+// ... keep all your other frame definitions ...
 
-// Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 68640)
-const int epd_bitmap_allArray_LEN = 66;
-const unsigned char* epd_bitmap_allArray[66] = {
-	epd_bitmap_frame_000_delay_0,
-	epd_bitmap_frame_001_delay_0,
-	epd_bitmap_frame_002_delay_0,
-	epd_bitmap_frame_003_delay_0,
-	epd_bitmap_frame_004_delay_0,
-	epd_bitmap_frame_005_delay_0,
-	epd_bitmap_frame_006_delay_0,
-	epd_bitmap_frame_007_delay_0,
-	epd_bitmap_frame_008_delay_0,
-	epd_bitmap_frame_009_delay_0,
-	epd_bitmap_frame_010_delay_0,
-	epd_bitmap_frame_011_delay_0,
-	epd_bitmap_frame_012_delay_0,
-	epd_bitmap_frame_013_delay_0,
-	epd_bitmap_frame_014_delay_0,
-	epd_bitmap_frame_015_delay_0,
-	epd_bitmap_frame_016_delay_0,
-	epd_bitmap_frame_017_delay_0,
-	epd_bitmap_frame_018_delay_0,
-	epd_bitmap_frame_019_delay_0,
-	epd_bitmap_frame_020_delay_0,
-	epd_bitmap_frame_021_delay_0,
-	epd_bitmap_frame_022_delay_0,
-	epd_bitmap_frame_023_delay_0,
-	epd_bitmap_frame_024_delay_0,
-	epd_bitmap_frame_025_delay_0,
-	epd_bitmap_frame_026_delay_0,
-	epd_bitmap_frame_027_delay_0,
-	epd_bitmap_frame_028_delay_0,
-	epd_bitmap_frame_029_delay_0,
-	epd_bitmap_frame_030_delay_0,
-	epd_bitmap_frame_031_delay_0,
-	epd_bitmap_frame_032_delay_0,
-	epd_bitmap_frame_033_delay_0,
-	epd_bitmap_frame_034_delay_0,
-	epd_bitmap_frame_035_delay_0,
-	epd_bitmap_frame_036_delay_0,
-	epd_bitmap_frame_037_delay_0,
-	epd_bitmap_frame_038_delay_0,
-	epd_bitmap_frame_039_delay_0,
-	epd_bitmap_frame_040_delay_0,
-	epd_bitmap_frame_041_delay_0,
-	epd_bitmap_frame_042_delay_0,
-	epd_bitmap_frame_043_delay_0,
-	epd_bitmap_frame_044_delay_0,
-	epd_bitmap_frame_045_delay_0,
-	epd_bitmap_frame_046_delay_0,
-	epd_bitmap_frame_047_delay_0,
-	epd_bitmap_frame_048_delay_0,
-	epd_bitmap_frame_049_delay_0,
-	epd_bitmap_frame_050_delay_0,
-	epd_bitmap_frame_051_delay_0,
-	epd_bitmap_frame_052_delay_0,
-	epd_bitmap_frame_053_delay_0,
-	epd_bitmap_frame_054_delay_0,
-	epd_bitmap_frame_055_delay_0,
-	epd_bitmap_frame_056_delay_0,
-	epd_bitmap_frame_057_delay_0,
-	epd_bitmap_frame_058_delay_0,
-	epd_bitmap_frame_059_delay_0,
-	epd_bitmap_frame_060_delay_0,
-	epd_bitmap_frame_061_delay_0,
-	epd_bitmap_frame_062_delay_0,
-	epd_bitmap_frame_063_delay_0,
-	epd_bitmap_frame_064_delay_0,
-	epd_bitmap_frame_065_delay_0
-};
+void setup() {
+  Serial.begin(115200);
+  if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;); // loop forever if OLED not found
+  }
+
+  display.clearDisplay();
+  Serial.println(F("OLED initialized. Starting animation..."));
+  Serial.print(F("Total frames: "));
+  Serial.println(frameCount);
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+  
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    
+    // Clear display
+    display.clearDisplay();
+    
+    // Draw current frame
+    display.drawBitmap(0, 0, frames[currentFrame], 128, 64, SSD1306_WHITE);
+    display.display();
+    
+    // Debug output
+    Serial.print(F("Frame: "));
+    Serial.println(currentFrame);
+    
+    // Move to next frame
+    currentFrame++;
+    if (currentFrame >= frameCount) {
+      currentFrame = 0; // Loop back to beginning
+    }
+  }
+}
